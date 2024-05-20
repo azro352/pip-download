@@ -6,26 +6,38 @@ on:
       package:
         description: 'The package to DL'
         required: true
+      pyversion:
+        description: 'Python version'
+        required: true
+        default: '3.11'
+        type: choice
+        options:
+          - "3.10"
+          - "3.11"
+          - "3.12"
 
 jobs:
   download:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
-      - run: |
+      - name: WF for ${{ inputs.package }}
+        run: |
           echo "DL: $PACKAGE"
         env:
           PACKAGE: ${{ inputs.package }}
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python ${{ inputs.pyversion }}
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ inputs.pyversion }}
 
       - name: Install python requirements
         run: |
           pip install pip wheel -U
 
-      - name: Download
+      - name: Download ${{ inputs.package }}
         env:
           PACKAGE: ${{ inputs.package }}
         run: |
