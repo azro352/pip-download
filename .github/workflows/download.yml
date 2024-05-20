@@ -1,0 +1,41 @@
+name: pip-download
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'The package to DL'
+        required: true
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "DL: $PACKAGE"
+        env:
+          PACKAGE: ${{ inputs.package }}
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install python requirements
+        run: |
+          pip install pip wheel -U
+
+      - name: Download
+        env:
+          PACKAGE: ${{ inputs.package }}
+        run: |
+          mkdir -p dependencies
+          cd dependencies
+          pip download $PACKAGE
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.package }}.downloads.zip
+          files: |
+            dependencies/*
