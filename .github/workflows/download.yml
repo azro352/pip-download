@@ -40,14 +40,16 @@ jobs:
       - name: Download ${{ inputs.package }}
         env:
           PACKAGE: ${{ inputs.package }}
+          PYVERSION: ${{ inputs.pyversion }}
         run: |
           mkdir -p dependencies
           cd dependencies
           pip download $PACKAGE
+          zip -r $PACKAGE.$PYVERSION.zip *
 
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ inputs.package }}.downloads.zip
+          tag_name: ${{ inputs.package }}.${{ inputs.pyversion }}
           files: |
-            dependencies/*
+            dependencies/${{ inputs.package }}.${{ inputs.pyversion }}.zip
