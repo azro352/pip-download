@@ -55,11 +55,13 @@ jobs:
           zip -r $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip *
           rm out
           date >> package_list.txt
-          echo "```" >> package_list.txt
+          echo "\`\`\`" >> package_list.txt
           ls -1 | grep -v ".zip" >> package_list.txt
-          echo "```" >> package_list.txt
+          echo "\`\`\`" >> package_list.txt
 
           cat package_list.txt
+
+          split -d -b 500MB $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip-part-
 
       - name: Release
         uses: softprops/action-gh-release@v2
@@ -68,4 +70,4 @@ jobs:
           make_latest: true
           body_path: dependencies/package_list.txt
           files: |
-            dependencies/${{ inputs.package }}.v${{ steps.download.outputs.pkg_version }}.py${{ inputs.pyversion }}.zip
+            dependencies/${{ inputs.package }}.v${{ steps.download.outputs.pkg_version }}.py${{ inputs.pyversion }}.zip-part*
