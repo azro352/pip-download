@@ -54,9 +54,10 @@ jobs:
           echo "pkg_version=${PKG_VERSION}" >> "$GITHUB_OUTPUT"
           zip -r $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip *
           rm out
-          echo "```" > package_list.txt
+          date >> package_list.txt
+          echo "```" >> package_list.txt
           ls -1 | grep -v ".zip" >> package_list.txt
-          echo "```" > package_list.txt
+          echo "```" >> package_list.txt
 
       - name: Test
         run: |
