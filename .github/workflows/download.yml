@@ -49,12 +49,11 @@ jobs:
           pip download $PACKAGE > out
           cat out
           WHEEL_NAME=$(head -n 2 out | tail -n 1 | grep "Downloading" | cut -f4 -d' ' | sed 's/.metadata//')
-          echo $WHEEL_NAME
-          ls $WHEEL_NAME
           pkginfo -f version $WHEEL_NAME | cut -f2 -d' '
           PKG_VERSION=$(pkginfo -f version $WHEEL_NAME | cut -f2 -d' ')
           echo "pkg_version=${PKG_VERSION}" >> "$GITHUB_OUTPUT"
           zip -r $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip *
+          ls -1 | grep -v ".zip" > package_list.txt
 
       - name: Test
         run: |
@@ -62,9 +61,11 @@ jobs:
         env:
           PKG_VERSION: ${{ steps.download.outputs.pkg_version }}
 
-      # - name: Release
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     tag_name: ${{ inputs.package }}.${{ inputs.pyversion }}
-      #     files: |
-      #       dependencies/${{ inputs.package }}.${{ inputs.pyversion }}.zip
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.package }}.v${{ steps.download.outputs.pkg_version }}.py${{ inputs.pyversion }}
+          make_latest: true
+          body_path: dependencies/package_list.txt
+          files: |
+            dependencies/${{ inputs.package }}.v${{ steps.download.outputs.pkg_version }}.py${{ inputs.pyversion }}.zip
