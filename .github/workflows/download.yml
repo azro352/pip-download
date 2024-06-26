@@ -56,7 +56,7 @@ jobs:
           rm out
           date >> package_list.txt
           echo "\`\`\`" >> package_list.txt
-          ls -1 | grep -v ".zip" >> package_list.txt
+          ls -1 | grep -v ".zip" | grep -v package_list >> package_list.txt
           echo "\`\`\`" >> package_list.txt
 
           cat package_list.txt
