@@ -65,11 +65,8 @@ jobs:
 
           file_size=`du --bytes "$PACKAGE.v$PKG_VERSION.py$PYVERSION.zip" | cut -f1`
           echo "fsize $file_size"
-          TOTAL_PARTS=$(( $file_size % 524288000 ))
           
-          p=$(printf "%.0f" $(echo "scale=2;$file_size/500000000" | bc))
-
-          echo "!! $p"
+          TOTAL_PARTS=$(printf "%.0f" $(echo "scale=2;$file_size/524288000" | bc))
 
           echo "parts $TOTAL_PARTS"
           split --numeric-suffixes=1 --bytes=500MB --additional-suffix="_in_$TOTAL_PARTS" $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip-part-
