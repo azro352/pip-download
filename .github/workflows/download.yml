@@ -63,7 +63,7 @@ jobs:
           cat package_list.txt
           ls -lia
 
-          file_size=`du "$PACKAGE.v$PKG_VERSION.py$PYVERSION.zip" | cut -f1`
+          file_size=`du --bytes "$PACKAGE.v$PKG_VERSION.py$PYVERSION.zip" | cut -f1`
           echo "fsize $file_size"
           TOTAL_PARTS=$(( $file_size % 524288000 ))
           echo "parts $TOTAL_PARTS"
