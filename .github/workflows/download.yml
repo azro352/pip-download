@@ -67,7 +67,7 @@ jobs:
           echo "fsize $file_size"
           TOTAL_PARTS=$(( $file_size % 524288000 ))
           
-          p=$(printf "%.2f" $(echo "scale=2;$file_size/500000000" | bc))
+          p=$(printf "%.0f" $(echo "scale=2;$file_size/500000000" | bc))
 
           echo "!! $p"
 
