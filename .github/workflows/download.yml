@@ -61,12 +61,13 @@ jobs:
           echo "\`\`\`" >> package_list.txt
 
           cat package_list.txt
+          ls -lia
 
           file_size=`du "$PACKAGE.v$PKG_VERSION.py$PYVERSION.zip" | cut -f1`
-          echo $file_size
+          echo "fsize $file_size"
           TOTAL_PARTS=$(( $file_size % 524288000 ))
-          echo $TOTAL_PARTS
-          split -d 1 -b 500MB --additional-suffix="_in_$TOTAL_PARTS" $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip-part-
+          echo "parts $TOTAL_PARTS"
+          split --numeric-suffixes 1 --bytes 500MB --additional-suffix="_in_$TOTAL_PARTS" $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip-part-
 
       - name: Release
         uses: softprops/action-gh-release@v2
