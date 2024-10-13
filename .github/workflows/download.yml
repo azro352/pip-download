@@ -61,14 +61,13 @@ jobs:
           echo "\`\`\`" >> package_list.txt
 
           cat package_list.txt
-          ls -lia
 
           file_size=`du --bytes "$PACKAGE.v$PKG_VERSION.py$PYVERSION.zip" | cut -f1`
           echo "fsize $file_size"
           
-          TOTAL_PARTS=$(printf "%.0f" $(echo "scale=2;$file_size/524288000" | bc))
-
+          TOTAL_PARTS=$(python -c "from math import ceil; print(ceil($file_size / (500 * 1024 ** 2)), end='')")
           echo "parts $TOTAL_PARTS"
+
           split --numeric-suffixes=1 --bytes=500MB --additional-suffix="_in_$TOTAL_PARTS" $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip-part-
 
       - name: Release
