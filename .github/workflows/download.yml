@@ -81,7 +81,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ inputs.package }}.v${{ steps.download.outputs.pkg_version }}.py${{ inputs.pyversion }}
+          tag_name: v${{github.run_id}}.0.0-${{ inputs.package }}.v${{ steps.download.outputs.pkg_version }}.py${{ inputs.pyversion }}
           make_latest: true
           body_path: dependencies/package_list.txt
           files: |
