@@ -56,6 +56,8 @@ jobs:
           echo "pkg_version=${PKG_VERSION}" >> "$GITHUB_OUTPUT"
           zip -r $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip *
           rm out
+          echo "Asked for $PACKAGE" >> package_list.txt
+          echo "Got version ${PKG_VERSION}" >> package_list.txt
           date >> package_list.txt
           echo "\`\`\`" >> package_list.txt
           ls -1 | grep -v ".zip" | grep -v package_list >> package_list.txt
@@ -69,7 +71,12 @@ jobs:
           TOTAL_PARTS=$(python -c "from math import ceil; print(ceil($file_size / (500 * 1024 ** 2)), end='')")
           echo "nb parts $TOTAL_PARTS"
 
-          split --numeric-suffixes=1 --bytes=500MB --additional-suffix="_in_$TOTAL_PARTS" $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip-part-
+          if [ $TOTAL_PARTS != "1" ]
+          then
+              echo "Split $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip into $TOTAL_PARTS parts"
+              split --numeric-suffixes=1 --bytes=500MB --additional-suffix="_in_$TOTAL_PARTS" $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip-part-
+              rm $PACKAGE.v$PKG_VERSION.py$PYVERSION.zip
+          fi
 
       - name: Release
         uses: softprops/action-gh-release@v2
@@ -78,4 +85,4 @@ jobs:
           make_latest: true
           body_path: dependencies/package_list.txt
           files: |
-            dependencies/${{ inputs.package }}.v${{ steps.download.outputs.pkg_version }}.py${{ inputs.pyversion }}.zip-part*
+            dependencies/${{ inputs.package }}.v${{ steps.download.outputs.pkg_version }}.py${{ inputs.pyversion }}.zip*
